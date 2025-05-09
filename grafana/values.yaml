@@ -1,0 +1,11 @@
+grafana:
+  enabled: true
+  adminPassword: "admin"  
+  service:
+    type: NodePort  
+    port: 3000
+    nodePort: 30007  
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "standard"  

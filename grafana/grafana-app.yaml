@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-stack
+  namespace: argocd
+spec:
+  destination:
+    namespace: monitoring  
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/rima-gif/banka-monotoring.git  # Ton repo GitHub
+    targetRevision: HEAD
+    path: grafana  # Le chemin vers le répertoire Grafana dans ton repo
+    helm:
+      valueFiles:
+        - values.yaml  # Le fichier values.yaml pour la configuration
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
