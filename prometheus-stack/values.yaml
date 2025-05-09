@@ -1,0 +1,43 @@
+grafana:
+  enabled: true
+  adminPassword: admin 
+  dashboards:
+    default:
+      nodes-overview:
+        json: |
+          {{ .Files.Get "dashboards/nodes-overview.json" | indent 6 }}
+  sidecar:
+    dashboards:
+      enabled: true
+    datasources:
+      enabled: true
+
+  notifiers:
+    - name: slack
+      type: slack
+      uid: slack-alert
+      org_id: 1
+      is_default: true
+      send_reminder: true
+      settings:
+        url: "https://hooks.slack.com/services/TON/WEBHOOK/ICI"
+        channel: "#alerting"
+        username: "grafana-bot"
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: 'slack-notifications'
+    receivers:
+      - name: 'slack-notifications'
+        slack_configs:
+          - send_resolved: true
+            text: "{{ .CommonAnnotations.summary }}"
+            channel: '#alerting'
+            api_url: 'https://hooks.slack.com/services/TON/WEBHOOK/ICI'
